@@ -1,24 +1,47 @@
 <script setup lang="ts">
+import { useField, useForm } from 'vee-validate'
+import type Card from '@/models/Card';
+
 type TProp = {
   isConfirmStep: boolean
+  newCard: Card
 }
 
 defineProps<TProp>()
+
+const { handleSubmit, handleReset } = useForm({
+  validationSchema: {
+
+  }
+})
+
+const name = useField('name')
+const selectType = useField('name')
+const selectBase = useField('name')
+
+const submit = handleSubmit(values => {
+    alert(JSON.stringify(values, null, 2))
+  })
+
 </script>
+
 <template>
-  <form class="form">
+  <form class="form" @submit.prevent="submit">
     <div class="fields-block">
       <v-text-field
+        v-model="name.value.value"
         label="Name Of A New Card"></v-text-field>
-      <v-select 
+      <v-select
+        v-model="selectType.value.value" 
         label="Select Type Of Money"></v-select>
       <v-select 
+        v-model="selectBase.value.value" 
         label="Select A Base Card"></v-select>
     </div>
     <div class="btns-block">
-      <v-btn class="cancel-btn">Cancel</v-btn>
-      <v-btn class="clear-btn">Clear</v-btn>
-      <v-btn class="next-btn">Next</v-btn>
+      <v-btn class="base-btn cancel-btn">Cancel</v-btn>
+      <v-btn class="base-btn clear-btn" @click="handleReset">Clear</v-btn>
+      <v-btn class="base-btn next-btn">Next</v-btn>
     </div>
   </form>
 </template>
@@ -45,6 +68,10 @@ defineProps<TProp>()
 
 .v-btn {
   text-transform: unset;
+}
+
+.base-btn {
+  min-width: 90px;
 }
 
 .next-btn {

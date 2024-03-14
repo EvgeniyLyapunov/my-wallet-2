@@ -4,6 +4,7 @@ import { defineComponent } from 'vue'
 
 import NameAndTypeForm from './components/name-and-type-form/NameAndTypeForm.vue'
 import OtherSetAndConfirm from './components/other-set-and-confirm/OtherSetAndConfirm.vue'
+import Card from '@/models/Card';
 
 defineComponent({
   name: 'new-card',
@@ -11,6 +12,7 @@ defineComponent({
 })
 
 const isConfirmStep = ref(false)
+const newCard = ref(new Card())
 </script>
 
 <template>
@@ -20,8 +22,8 @@ const isConfirmStep = ref(false)
       <h2 class="subtitle">New Card</h2>
     </div>
     <div class="forms-block">
-      <NameAndTypeForm v-if="!isConfirmStep" :isConfirmStep="isConfirmStep" />
-      <OtherSetAndConfirm v-if="isConfirmStep" :isConfirmStep="isConfirmStep" />
+      <NameAndTypeForm v-if="!isConfirmStep" :isConfirmStep="isConfirmStep" :newCard="newCard" />
+      <OtherSetAndConfirm v-if="isConfirmStep" :isConfirmStep="isConfirmStep" :newCard="newCard"/>
     </div>
   </div>
 </template>

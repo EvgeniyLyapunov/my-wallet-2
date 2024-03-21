@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate'
 import type Card from '@/models/Card';
+import { ref } from 'vue';
 
 type TProp = {
   isConfirmStep: boolean
@@ -11,13 +12,34 @@ defineProps<TProp>()
 
 const { handleSubmit, handleReset } = useForm({
   validationSchema: {
+    name(value: string) {
+      if(value?.length >= 2 || value?.length <= 30)
+        return true
 
+      return 'Длина имени карты от 2 до 30 символов'
+    },
+    selectType(value: string) {
+      if(value)
+        return true
+
+      return 'Тип карты - наличные или безнал'
+    },
+    selectBase(value: string) {
+      if(value)
+        return true
+
+      return 'Если карта базовая, выберите пункт "base"'      
+    }
   }
 })
 
 const name = useField('name')
-const selectType = useField('name')
-const selectBase = useField('name')
+const selectType = useField<string>('selectType')
+const selectBase = useField<string>('selectBase')
+
+const selectTypeItems = ref<string[]>(['cash', 'bank'])
+const selectBaseItems = ref<string[]>(['base'])
+
 
 const submit = handleSubmit(values => {
     alert(JSON.stringify(values, null, 2))
@@ -30,18 +52,23 @@ const submit = handleSubmit(values => {
     <div class="fields-block">
       <v-text-field
         v-model="name.value.value"
+        :error-messages="name.errorMessage.value"
         label="Name Of A New Card"></v-text-field>
-      <v-select
-        v-model="selectType.value.value" 
-        label="Select Type Of Money"></v-select>
+      <v-combobox
+        v-model="selectType.value.value"
+        :error-messages="selectType.errorMessage.value" 
+        :items="selectTypeItems"
+        label="Select Type Of Money"></v-combobox>
       <v-select 
         v-model="selectBase.value.value" 
+        :error-messages="selectBase.errorMessage.value"
+        :items="selectBaseItems" 
         label="Select A Base Card"></v-select>
     </div>
     <div class="btns-block">
       <v-btn class="base-btn cancel-btn">Cancel</v-btn>
       <v-btn class="base-btn clear-btn" @click="handleReset">Clear</v-btn>
-      <v-btn class="base-btn next-btn">Next</v-btn>
+      <v-btn class="base-btn next-btn" type="submit">Next</v-btn>
     </div>
   </form>
 </template>

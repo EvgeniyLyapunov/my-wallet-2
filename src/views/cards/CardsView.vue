@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 
 defineComponent({
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'cards',
   path: '/wallet/cards'
 })

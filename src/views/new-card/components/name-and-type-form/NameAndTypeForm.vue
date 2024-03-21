@@ -1,19 +1,27 @@
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate'
-import type Card from '@/models/Card';
-import { ref } from 'vue';
+import type Card from '@/models/Card'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+
+import { useNewCardStore } from '@/stores/NewCardStore';
+
+const router = useRouter()
 
 type TProp = {
   isConfirmStep: boolean
-  newCard: Card
 }
+
+const newCardStore = useNewCardStore()
+
+const createdCard = newCardStore.currentStateOfNewCard
 
 defineProps<TProp>()
 
 const { handleSubmit, handleReset } = useForm({
   validationSchema: {
     name(value: string) {
-      if(value?.length >= 2 || value?.length <= 30)
+      if(value?.length >= 2 && value?.length <= 30)
         return true
 
       return 'Длина имени карты от 2 до 30 символов'
@@ -29,21 +37,40 @@ const { handleSubmit, handleReset } = useForm({
         return true
 
       return 'Если карта базовая, выберите пункт "base"'      
+    },
+    startAmount(value: number) {
+      if(+value >= 0)
+        return true
+
+      return 'Начальная сумма равна или больше 0'
     }
   }
 })
 
-const name = useField('name')
+const name = useField<string>('name')
 const selectType = useField<string>('selectType')
 const selectBase = useField<string>('selectBase')
+const startAmount = useField<number>('startAmount')
 
 const selectTypeItems = ref<string[]>(['cash', 'bank'])
 const selectBaseItems = ref<string[]>(['base'])
 
+const handleCancel = () => {
+  newCardStore.clearNewCardTemplate()
+
+  window.history.length > 1 ? router.go(-1) : router.push('/')
+}
 
 const submit = handleSubmit(values => {
-    alert(JSON.stringify(values, null, 2))
-  })
+  createdCard.cardName = values.name;
+  createdCard.cardMoneyType = values.selectType;
+  createdCard.baseCardName = values.selectBase;
+  createdCard.currentSum = values.startAmount;
+
+  newCardStore.saveNewCard(createdCard);
+
+  router.push('cards')
+})
 
 </script>
 
@@ -53,22 +80,31 @@ const submit = handleSubmit(values => {
       <v-text-field
         v-model="name.value.value"
         :error-messages="name.errorMessage.value"
+        variant="outlined"
         label="Name Of A New Card"></v-text-field>
-      <v-combobox
+      <v-select
         v-model="selectType.value.value"
         :error-messages="selectType.errorMessage.value" 
         :items="selectTypeItems"
-        label="Select Type Of Money"></v-combobox>
+        variant="outlined"
+        label="Select Type Of Money"></v-select>
       <v-select 
         v-model="selectBase.value.value" 
         :error-messages="selectBase.errorMessage.value"
-        :items="selectBaseItems" 
+        :items="selectBaseItems"
+        variant="outlined"
         label="Select A Base Card"></v-select>
+      <v-text-field
+        type="number"
+        v-model="startAmount.value.value"
+        :error-messages="startAmount.errorMessage.value"
+        variant="outlined"
+        label="Start Amount"></v-text-field>
     </div>
     <div class="btns-block">
-      <v-btn class="base-btn cancel-btn">Cancel</v-btn>
+      <v-btn class="base-btn cancel-btn" @click="handleCancel">Cancel</v-btn>
       <v-btn class="base-btn clear-btn" @click="handleReset">Clear</v-btn>
-      <v-btn class="base-btn next-btn" type="submit">Next</v-btn>
+      <v-btn class="base-btn next-btn" type="submit">Create</v-btn>
     </div>
   </form>
 </template>

@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { defineComponent } from 'vue'
 
 import NameAndTypeForm from './components/name-and-type-form/NameAndTypeForm.vue'
-import OtherSetAndConfirm from './components/other-set-and-confirm/OtherSetAndConfirm.vue'
 import Card from '@/models/Card';
 
 defineComponent({
@@ -23,7 +22,6 @@ const newCard = ref(new Card())
     </div>
     <div class="forms-block">
       <NameAndTypeForm v-if="!isConfirmStep" :isConfirmStep="isConfirmStep" :newCard="newCard" />
-      <OtherSetAndConfirm v-if="isConfirmStep" :isConfirmStep="isConfirmStep" :newCard="newCard"/>
     </div>
   </div>
 </template>

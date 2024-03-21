@@ -3,6 +3,7 @@ import '@/assets/style/base/base.css'
 import { defineComponent } from 'vue'
 
 defineComponent({
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'home',
   path: '/'
 })

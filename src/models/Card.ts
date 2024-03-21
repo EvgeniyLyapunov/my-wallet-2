@@ -6,6 +6,8 @@ class Card {
   cardName: string
   cardMoneyType: string
   isVirtual: boolean
+  baseCardName: string | null
+  baseCardId: string | null
   virtualList: string[]
   currentSum: number
   operationHistory: Operation[]
@@ -17,6 +19,8 @@ class Card {
     this.cardName = ''
     this.cardMoneyType = ''
     this.isVirtual = false
+    this.baseCardName = null
+    this.baseCardId = null
     this.virtualList = []
     this.currentSum = 0
     this.operationHistory = []
